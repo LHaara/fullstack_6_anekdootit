@@ -16,22 +16,18 @@ class AnecdoteList extends React.Component {
   }
 
   render() {
-
-    const anecdotes = this.props/* .store.getState() */.anecdotes
-    const rajaus = this.props/* .store.getState() */.filter
-    const filtered = anecdotes.filter(function (str) { return str.content.toLowerCase().includes(rajaus.toLowerCase())})
     return (
       <div>
         <h2>Anecdotes</h2>
         <Filter store={this.props.store}/>
-        {filtered.sort((a, b) => b.votes - a.votes).map(anecdote =>
+        {this.props.visibleSortedAnecdotes.map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
             </div>
             <div>
               has {anecdote.votes}
-              <button onClick={this.voteAnecdote(anecdote.id, anecdotes)}>
+              <button onClick={this.voteAnecdote(anecdote.id, this.props.visibleSortedAnecdotes)}>
                 vote
               </button>
             </div>
@@ -42,10 +38,16 @@ class AnecdoteList extends React.Component {
   }
 }
 
+const filteredAndSortedAnecdotes = (anecdotes, filter) => {
+  const filtered = anecdotes.filter(function (str) { return str.content.toLowerCase().includes(filter.toLowerCase())})
+  return filtered.sort((a, b) => b.votes - a.votes)
+}
+
+
+
 const mapStateToProps = (state) => {
   return {
-    anecdotes: state.anecdotes,
-    filter: state.filter
+    visibleSortedAnecdotes: filteredAndSortedAnecdotes(state.anecdotes, state.filter)
   }
 }
 
