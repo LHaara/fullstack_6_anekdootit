@@ -3,14 +3,18 @@ import { anecdoteVoting } from '../reducers/anecdoteReducer'
 import { messageCreation } from '../reducers/notificationReducer'
 import Filter from './Filter'
 import { connect } from 'react-redux'
+import anecdoteService from '../services/anecdotes'
 
 
 class AnecdoteList extends React.Component {
 
-  voteAnecdote = (id, anecdotes) => () => {
-    const votedNotification = anecdotes.find(n => n.id === id)
-    this.props.anecdoteVoting(id)
-    this.props.messageCreation('You voted "'+votedNotification.content+'"')
+  voteAnecdote = (id, anecdotes) => async () => {
+    const votedAnecdote = anecdotes.find(n => n.id === id)
+    const changedAnecdote = { ...votedAnecdote, votes: votedAnecdote.votes+1 }
+    const updatedAnecdote = await anecdoteService.update(id, changedAnecdote)
+
+    this.props.anecdoteVoting(updatedAnecdote)
+    this.props.messageCreation('You voted "'+votedAnecdote.content+'"')
     setTimeout(() => {this.props.messageCreation('')}, 5000)
 
   }
@@ -39,6 +43,7 @@ class AnecdoteList extends React.Component {
 }
 
 const filteredAndSortedAnecdotes = (anecdotes, filter) => {
+  //console.log(anecdotes)
   const filtered = anecdotes.filter(function (str) { return str.content.toLowerCase().includes(filter.toLowerCase())})
   return filtered.sort((a, b) => b.votes - a.votes)
 }
