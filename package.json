@@ -11,6 +11,7 @@
     "react-redux": "^5.1.1",
     "react-scripts": "1.0.17",
     "redux": "^3.7.2",
+    "redux-thunk": "^2.3.0",
     "types": "^0.1.1"
   },
   "scripts": {
